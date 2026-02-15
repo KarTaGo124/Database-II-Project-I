@@ -259,7 +259,7 @@ class FreeListStack:
                 file.seek(0, 2)
                 file.write(struct.pack('i', page_num))
             return True
-        except:
+        except (IOError, OSError, struct.error):
             return False
     
     def pop_free_page(self):
@@ -283,7 +283,7 @@ class FreeListStack:
                 file.write(struct.pack('i', count - 1))
 
                 return page_num
-        except:
+        except (IOError, OSError, struct.error):
             return None
     
     def get_free_count(self):
@@ -294,7 +294,7 @@ class FreeListStack:
             with open(self.free_list_file, "rb") as file:
                 count_data = file.read(4)
                 return struct.unpack('i', count_data)[0] if count_data else 0
-        except:
+        except (IOError, OSError, struct.error):
             return 0
     
     def clear(self):
@@ -629,7 +629,7 @@ class ISAMPrimaryIndex:
                         return record
 
                 current_page_num = page.next_page if page.next_page != -1 else -1
-            except:
+            except (IOError, OSError, struct.error):
                 break
 
         return None
@@ -754,7 +754,7 @@ class ISAMPrimaryIndex:
                 next_page = self._read_page(file, current)
                 current = next_page.next_page
                 length += 1
-            except:
+            except (IOError, OSError, struct.error):
                 break
 
         return length
@@ -777,7 +777,7 @@ class ISAMPrimaryIndex:
             _ = self._find_target_leaf_page(dummy_key)
             _ = self._find_target_data_page(dummy_key, 0)
             
-        except:
+        except (IOError, OSError, struct.error, ValueError):
             pass
         
         self.performance = PerformanceTracker()
@@ -994,7 +994,7 @@ class ISAMPrimaryIndex:
                         if entry.data_page_number == page_num:
                             return False
                 return True
-        except:
+        except (IOError, OSError, struct.error):
             return page_num > 0
 
     def show_structure(self):
