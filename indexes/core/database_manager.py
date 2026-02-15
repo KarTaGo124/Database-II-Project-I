@@ -784,7 +784,7 @@ class DatabaseManager:
                     table_stats["record_count"] = len(scan_result.data) if scan_result.data else 0
                 else:
                     table_stats["record_count"] = 0
-            except:
+            except (IOError, OSError, AttributeError, NotImplementedError):
                 table_stats["record_count"] = 0
 
             stats["tables"][table_name] = table_stats

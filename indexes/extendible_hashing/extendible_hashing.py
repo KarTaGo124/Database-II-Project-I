@@ -68,9 +68,6 @@ class Bucket:
             if normalized_record == normalized_search:
                 matching_pks.append(record.primary_key)
 
-        if debug:
-            print(f"    [BUCKET DEBUG] Found {len(matching_pks)} matches")
-
         return matching_pks
 
     def write_bucket(self, bucket_pos, bucketfile):
@@ -238,7 +235,7 @@ class ExtendibleHashing:
                 bucket_size = Bucket.HEADER_SIZE + (BLOCK_FACTOR * self.index_record_size)
                 for _ in range(min(10, 2 ** self.global_depth)):
                     bucketfile.read(bucket_size)
-        except:
+        except (IOError, OSError):
             pass
         finally:
             self.performance = old_tracker
@@ -291,9 +288,6 @@ class ExtendibleHashing:
             while current_bucket is not None:
                 bucket_matches = current_bucket.search(secondary_value, self, debug=debug)
                 matching_pk.extend(bucket_matches)
-
-                if debug:
-                    print(f"[HASH SEARCH DEBUG] Bucket {bucket_num} found {len(bucket_matches)} matches")
 
                 if current_bucket.next_overflow_bucket != -1:
                     current_pos = current_bucket.next_overflow_bucket
